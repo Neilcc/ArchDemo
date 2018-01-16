@@ -1,8 +1,16 @@
 package com.zcc.archdemo.datarepo;
 
+import android.annotation.SuppressLint;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
+import android.arch.persistence.room.Room;
+import android.content.Context;
+import android.os.AsyncTask;
+import android.util.Log;
 
+import com.zcc.archdemo.datarepo.db.PageDAO;
+import com.zcc.archdemo.datarepo.db.PageDBO;
+import com.zcc.archdemo.datarepo.db.PageDataBase;
 import com.zcc.archdemo.model.PagePOJO;
 
 /**
@@ -11,10 +19,15 @@ import com.zcc.archdemo.model.PagePOJO;
 
 public class PageRepo {
 
+    PageDAO pageDAO;
+    PageDataBase pageDataBase;
     private MutableLiveData<PagePOJO> mData;
+    private Context appContext;
 
-    public PageRepo() {
+    public PageRepo(Context context) {
+        appContext = context.getApplicationContext();
         mData = new MutableLiveData<>();
+        pageDataBase = Room.databaseBuilder(appContext, PageDataBase.class, "page").build();
     }
 
     public LiveData<PagePOJO> getData() {
@@ -25,10 +38,24 @@ public class PageRepo {
     }
 
     private boolean fetch() {
-        return true;
+        return false;
     }
 
+    @SuppressLint("StaticFieldLeak")
     private void loadLocal() {
+        pageDAO = pageDataBase.getDAO();
+        new AsyncTask<Void, Void, Void>(){
+
+            @Override
+            protected Void doInBackground(Void... voids) {
+                PageDBO[] datas = pageDAO.queryAll();
+                if (datas != null)
+                    Log.d("test", datas.toString());
+                else
+                    Log.d("test", " null db ");
+                return null;
+            }
+        }.execute();
 
     }
 

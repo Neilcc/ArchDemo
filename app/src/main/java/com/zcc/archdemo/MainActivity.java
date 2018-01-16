@@ -20,12 +20,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        pageRepo = new PageRepo();
+        pageRepo = new PageRepo(this);
         hello = findViewById(R.id.text);
         change = findViewById(R.id.change);
         change.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                pageRepo.getData();
                 pageRepo.upDateText("updated");
             }
         });
